@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
+use App\Mail\LoginAlertMail;
 
 class AuthController extends Controller
 {
@@ -20,12 +23,16 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) 
-            {
-                return redirect('/dashboard');
-            }
+        if (Auth::attempt($credentials)) {
 
-            return back()->with('error', 'Credenciales incorrectas');
+            $user = Auth::user();
+
+            Mail::to($user->email)->send(new LoginAlertMail($user));
+
+            return redirect('/dashboard');
+        }
+
+        return back()->with('error', 'Credenciales incorrectas');
     }
 
     // Mostrar el registro.
@@ -48,6 +55,8 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         Auth::login($user);
 
