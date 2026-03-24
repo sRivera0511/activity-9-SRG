@@ -20,7 +20,7 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (Auth::atempt($credentials)) 
+        if (Auth::attempt($credentials)) 
             {
                 return redirect('/dashboard');
             }
@@ -49,7 +49,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        Auth:login($user);
+        Auth::login($user);
 
         return redirect('/dashboard');
     }
