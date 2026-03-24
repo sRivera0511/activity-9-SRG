@@ -1,7 +1,23 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
+// Landing page.
 Route::get('/', function () {
-    return view('welcome');
+    return view('landingpage');
 });
+
+// Dashboard protegido.
+Route::get('/dashboard', function() {
+    return view('dashboard');
+})->middleware('auth');
+
+// Autenticación.
+Route::get('/login', [AuthController::class, 'showLogin']);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/register', [AuthController::class, 'showRegister']);
+Route::post('/register', [AuthController::class, 'register']);
+
+Route::post('/logout', [AuthController::class, 'logout']);
